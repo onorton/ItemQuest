@@ -292,8 +292,7 @@ public class IntentIntegrator {
    * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
    *   if a prompt was needed, or null otherwise
    */
-  @SuppressWarnings("deprecation")
-public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats, int cameraId) {
+  public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats, int cameraId) {
     Intent intentScan = new Intent(BS_PACKAGE + ".SCAN");
     intentScan.addCategory(Intent.CATEGORY_DEFAULT);
 
@@ -321,7 +320,7 @@ public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats, 
     }
     intentScan.setPackage(targetAppPackage);
     intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+   // intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
     attachMoreExtras(intentScan);
     startActivityForResult(intentScan, REQUEST_CODE);
     return null;
@@ -455,8 +454,7 @@ public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats, 
    * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
    *   if a prompt was needed, or null otherwise
    */
-  @SuppressWarnings("deprecation")
-public final AlertDialog shareText(CharSequence text, CharSequence type) {
+  public final AlertDialog shareText(CharSequence text, CharSequence type) {
     Intent intent = new Intent();
     intent.addCategory(Intent.CATEGORY_DEFAULT);
     intent.setAction(BS_PACKAGE + ".ENCODE");

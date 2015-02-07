@@ -1,0 +1,17 @@
+
+//example - not tested, so IDK if it works
+
+public String calcSuffix (int number) {
+  int lastDigit = number % 10;
+  switch (lastDigit) {
+    case 1: return "st"; break;
+    case 2: return "nd"; break;
+    case 3: return "rd"; break;
+    default: return "th"; break;
+  }
+}
+
+String item = "Coke";
+String message = "I scanned my " + score + calcSuffix + " item which was a " + item + "! - Item Quest";
+String urlFacebook = "https://www.facebook.com/sharer/sharer.php?u=" + message;
+String urlTwitter = "https://twitter.com/home?status=" + message;
