@@ -1,19 +1,27 @@
 package com.epicgamearts.itemquest;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -21,31 +29,52 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 public class ScanActivity extends Activity implements OnClickListener {
+	
+	
 
 	private Button scanBtn;
-	private TextView contentTxt, scoreTxt, scannedTxt, itemTxt;
+	private TextView scoreTxt, scannedTxt, itemTxt;
 	private String toFind, barcode, currentItem;
 	private int itemsScanned = 0;
 	private int score;
-	
+	private String filename = "data.txt";
+    File file = new File(filename);
 	
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_scan);
 		Intent intent = getIntent();
-	    currentItem = intent.getStringExtra("CURRENTITEM");
 		scanBtn = (Button)findViewById(R.id.scan_button);
-		contentTxt = (TextView)findViewById(R.id.scan_content);
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy); 
+	    
+		
+		String text = readFromFile();
+		try {
+	    itemsScanned = Integer.parseInt(text.split(";")[0]);
+	    score =Integer.parseInt(text.split(";")[1]);
+		currentItem = text.split(";")[2];
+		toFind = text.split(";")[3];
+		
+		
+		} catch (Exception e) {
+		
+			
+		}
+		
 		setScore();
 		setItemsScanned();
 		setItemName();
+		setImage();
 		
 		scanBtn.setOnClickListener(this);
 		
@@ -58,7 +87,9 @@ public class ScanActivity extends Activity implements OnClickListener {
 		   itemsScanned++;
 		   setScore();
 		   setItemsScanned();
+		   currentItem = null;
 		   setItemName();
+		   
 	   }
 	   }
 	   	   
@@ -123,7 +154,9 @@ public class ScanActivity extends Activity implements OnClickListener {
       int i = r.nextInt(items.size());
       text = items.get(i);
       toFind = text.split(",")[1];
-	 return text.split(",")[0];
+      currentItem = text.split(",")[0];
+      setImage();
+	 return currentItem;
 	
    }
 
@@ -184,18 +217,118 @@ public class ScanActivity extends Activity implements OnClickListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	@Override
+
+	@Override 
 	public void onBackPressed() {
-		Intent intent = new Intent();
-		intent.putExtra("CURRENTITEM",currentItem);
-		setResult(RESULT_OK, intent);
+		
+		saveStuff();
 		super.onBackPressed();
 	
 	}
 	
 
+	public void saveStuff() {
+		String textToSave = score + ";" + itemsScanned + ";" + currentItem + ";" + toFind;
+		 writeToFile(textToSave);
+	}
+	
+	@Override
+	public void onStop() {
+		saveStuff();
+		super.onStop();
+	}
+	
+	private void writeToFile(String data) { 
+	        
+	         try {
 
+	              // open myfilename.txt for writing
+	              OutputStreamWriter out=new OutputStreamWriter(openFileOutput("data.txt",MODE_APPEND));
+	              // write the contents to the file
+
+	              
+	            
+	               out.write(data);
+	               out.write('\n');
+ 	              // close the file
+
+	              out.close();
+
+	            //  Toast.makeText(this,"Text Saved !",Toast.LENGTH_LONG).show();
+	            } catch (java.io.IOException e) {
+
+	                //do something if an IOException occurs.
+	  Toast.makeText(this,"Sorry Text could't be added",Toast.LENGTH_LONG).show();
+
+
+	              }
+    }
 	
 	
+	private void setImage() {
+		       
+		ImageView image = (ImageView) findViewById(R.id.item_image);
+		 Drawable drawable = LoadImageFromWebOperations("http://epicgamearts.com/itemquest/images/" + toFind + ".png");
+
+		image.setImageDrawable(drawable);
+		  
+
+		
+	}
+		    
+ private Drawable LoadImageFromWebOperations(String url)
+  {
+	try{
+		    InputStream is = (InputStream) new URL(url).getContent();
+		    Drawable d = Drawable.createFromStream(is, "src name");
+		    return d;
+	}catch (Exception e) {
+		Toast.makeText(this,"Sorry, could't find image",Toast.LENGTH_LONG).show();
+		 return null;
+	}
+		 
+	}
+
+ 
+    private String readFromFile() {
+    	 StringBuilder text = new StringBuilder();
+    	    
+    	    
+         try {
+                // open the file for reading we have to surround it with a try
+            
+                InputStream instream = openFileInput("data.txt");//open the text file for reading
+                
+                // if file the available for reading
+                if (instream != null) {                
+                    
+                  // prepare the file for reading
+                  InputStreamReader inputreader = new InputStreamReader(instream);
+                  BufferedReader buffreader = new BufferedReader(inputreader);
+                  String line=null;
+                  //We initialize a string "line" 
+                //  Toast.makeText(this,"Awwshiit",Toast.LENGTH_LONG).show();
+        
+                    //buffered reader reads only one line at a time, hence we give a while loop to read all till the text is null
+                  String lastLine = "";
+
+                  while ((line= buffreader.readLine()) != null) 
+                  {
+                    
+                      lastLine = line;
+                  }
+    
+                		 text.append(lastLine);  
+                     
+                              
+                      
+                  }}
+                    
+                 //now we have to surround it with a catch statement for exceptions
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+        
+                 return text.toString();
+            }
 }

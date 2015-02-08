@@ -9,6 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.epicgamearts.itemquest.ScanActivity" >
 
+    
+    <ImageView 
+        android:id="@+id/item_image"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="200dp" />
     <Button
         android:id="@+id/scan_button"
         android:layout_width="wrap_content"

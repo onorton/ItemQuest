@@ -6,7 +6,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,8 +20,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
-	private static String currentItem = null;
 	
+	private String currentItem = null;
 	
 	
 	@Override
@@ -31,8 +33,7 @@ public class MainActivity extends Activity {
 	/** Called when the user clicks the Start Quest button */
 	public void scanItem(View view) {
 		  Intent intent = new Intent(this, ScanActivity.class);
-		  intent.putExtra("CURRENTITEM", currentItem);
-		  startActivityForResult(intent, 1);
+		  startActivity(intent);
 		}
 	
 	@Override
@@ -52,17 +53,13 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+		
 	}
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-	    if (requestCode == 1) {
-	         if(resultCode == RESULT_OK){
-	          currentItem=data.getStringExtra("CURRENTITEM");
-	         }
-	    } 
-	}
+	
+	
+	
 	
 	
 }
