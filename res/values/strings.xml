@@ -7,5 +7,8 @@
     <string name="scan">Scan</string>
     <string name="title_activity_scan">ScanActivity</string>
     <string name="button_scanItem">Start Quest</string>
-    
+    <string name="title_activity_add">AddActivity</string>
+     <string name="add_data">Add To Database</string>
+     <string name="edit_message">Enter Name Here</string>
+
 </resources>

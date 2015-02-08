@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="117dp"
         android:background="@drawable/btn_about" 
-         />
+        android:onClick="addItem"/>
 
     <Button
         android:id="@+id/Options"
